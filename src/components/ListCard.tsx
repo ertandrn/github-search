@@ -1,8 +1,10 @@
 import React, { ElementType, FunctionComponent } from 'react';
 import Box from '@material-ui/core/Box';
+import Avatar from '@material-ui/core/Avatar';
 
 interface IListProps {
-    icon: any;
+    icon?: any;
+    avatarURL?: string;
     title: string;
     description: string;
 }
@@ -13,7 +15,18 @@ const ListCard: FunctionComponent<IListProps> = (props) => {
 
             <Box flexDirection="row" display="flex" borderBottom={1} style={{ borderBottomColor:"#bebebe", paddingTop: 24, paddingBottom: 24 }} >
 
-                <Box>{props.icon}</Box>
+                {
+                    props.icon ?
+
+                    <Box display="flex" justifyContent="center">{props.icon}</Box>
+
+                    :
+
+                    <Box display="flex" justifyContent="center">
+                        <Avatar alt="Remy Sharp" src={props.avatarURL} style={{ width: 24, height: 24 }} />
+                    </Box>
+
+                }
 
                 <Box style={{ marginLeft: 8 }}>
 
