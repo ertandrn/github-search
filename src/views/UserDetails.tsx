@@ -7,6 +7,7 @@ import Book from "../svg/Book";
 import Avatar from '@material-ui/core/Avatar';
 import ListCard from "../components/ListCard";
 import UserDetailsTitle from "../components/UserDetailsTitle";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 function UserDetails() {
 
@@ -42,7 +43,7 @@ function UserDetails() {
 
     if (emptyArray) {
         return (
-            <Box></Box>
+            <LinearProgress />
         )
     }
 

@@ -14,6 +14,7 @@ import GitFork from "../svg/GitFork";
 import GitBranch from "../svg/GitBranch";
 import IssueOpened from "../svg/IssueOpened";
 import GitPullRequest from "../svg/GitPullRequest";
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 function RepositoryDetails() {
 
@@ -90,7 +91,7 @@ function RepositoryDetails() {
 
     if (emptyArray) {
         return (
-            <Box></Box>
+            <LinearProgress />
         )
     }
 
