@@ -1,9 +1,5 @@
-import React, { ElementType, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import Box from '@material-ui/core/Box';
-
-import InsertEmoticion from "../svg/InsertEmoticion";
-import BookmarkBorder from "../svg/BookmarkBorder";
-import InsertDriveFile from "../svg/InsertDriveFile";
 
 interface ISidebarButtonProps {
     id: number;

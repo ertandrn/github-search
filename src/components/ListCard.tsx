@@ -1,12 +1,14 @@
-import React, { ElementType, FunctionComponent } from 'react';
+import React, { FunctionComponent } from 'react';
 import Box from '@material-ui/core/Box';
 import Avatar from '@material-ui/core/Avatar';
+import Link from '@material-ui/core/Link';
 
 interface IListProps {
     icon?: any;
     avatarURL?: string;
     title: string;
     description: string;
+    link: string;
 }
 
 const ListCard: FunctionComponent<IListProps> = (props) => {
@@ -38,7 +40,9 @@ const ListCard: FunctionComponent<IListProps> = (props) => {
                         letterSpacing="normal"
                         color="#375f9d"
                     >
-                        {props.title}
+                        <Link href={props.link} >
+                            {props.title}
+                        </Link>
                     </Box>
 
                     <Box

@@ -1,85 +1,41 @@
 import React from "react";
-
 import Box from "@material-ui/core/Box";
-import Grid from '@material-ui/core/Grid';
-
-import { Event, Repositories } from "../type"
-
-import axios from "axios";
-
-import Header from "../components/Header";
-import EmptyPage from "../components/EmptyPage";
+import LinearProgress from '@material-ui/core/LinearProgress';
 import ListCard from "../components/ListCard";
 import Title from "../components/Title";
 import SidebarButton from "../components/SidebarButton";
-
+import Layout from "../components/Layout";
 import Book from "../svg/Book";
 import InsertEmoticion from "../svg/InsertEmoticion";
-import BookmarkBorder from "../svg/BookmarkBorder";
+import Bookmark from "../svg/Bookmark";
 import InsertDriveFile from "../svg/InsertDriveFile";
-
+import axios from "axios";
+import { useParams } from "react-router-dom";
 
 function Search() {
 
-    const [search, setSearch] = React.useState<string>("");
+    const { search }: any = useParams();
+
     const [repositories, setRepositories] = React.useState<any>([]);
+    const [userLogins, setUserLogins] = React.useState<any>([]);
     const [users, setUsers] = React.useState<any>([]);
-
     const [selectedSidebarMenu, setSelectedSidebarMenu] = React.useState<number>(0);
+    const [progress, setProgress] = React.useState<boolean>(false);
 
-    function iconColor(id: number) {
-        if (id == selectedSidebarMenu) {
-            return "#375f9d";
+    React.useEffect(() => {
+
+        if (search != "") {
+            getData();
+            setProgress(true);
         }
 
-        else {
-            return "#757575";
-        }
-    }
+    }, [search]);
 
-    var sideBarMenuData: any =
-        [
-            {
-                id: 0,
-                icon: <InsertDriveFile color={iconColor(0)} width={24} height={24} />,
-                name: "Repositories",
-                totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
-                onClick: () => { alert("Tıklandı"); setSelectedSidebarMenu(0) },
-                selectedSidebarMenu: false
-            },
+    const getData = async () => {
 
-            {
-                id: 1,
-                icon: <InsertEmoticion color={iconColor(1)} width={24} height={24} />,
-                name: "Users",
-                totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
-                onClick: () => { alert("Tıklandı") },
-                selectedSidebarMenu: false
-            },
-
-            {
-                id: 2,
-                icon: <BookmarkBorder color={iconColor(2)} width={24} height={24} />,
-                name: "Bookmarked",
-                totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
-                onClick: () => { alert("Tıklandı") },
-                selectedSidebarMenu: false
-            }
-
-        ];
-
-    const deneme = (id: number) => {
-        //alert(id);
-        setSelectedSidebarMenu(id);
-    }
-
-    const searchChange: Event = (e) => {
-        setSearch(e.target.value);
-    }
-
-    const getData = async (e: MouseEvent) => {
-
-        e.preventDefault();
+        try {
+            var orderlySearch = await getOrderlySearch(search);
+        } catch (error) { console.log(error); }
 
         try {
             var orderlySearch = await getOrderlySearch(search);
@@ -94,6 +50,7 @@ function Search() {
         var userLogins = [];
         try {
             userLogins.push(await axios.get("https://api.github.com/search/users?q=" + orderlySearch))
+            setUserLogins(userLogins);
         } catch (error) { console.log(error); alert(error) }
 
         var users = []
@@ -114,14 +71,15 @@ function Search() {
         }
 
         setUsers(users);
+        setProgress(false);
 
     }
 
-    const getOrderlySearch = (value: string) => {
+    const getOrderlySearch = (text: string) => {
 
         return new Promise((resolve, reject) => {
 
-            let search: string = value.trim();
+            let search: string = text.trim();
 
             search = search.replace(/ /g, "+");
 
@@ -131,73 +89,134 @@ function Search() {
 
     }
 
-    return (
-        <Box>
+    function iconColor(id: number) {
+        if (id == selectedSidebarMenu) {
+            return "#375f9d";
+        }
 
-            <Header searchChange={searchChange} onSubmit={getData} />
+        else {
+            return "#757575";
+        }
+    }
+
+    let titleData: any =
+        [
+            {
+                totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
+                title: "Repository Results"
+            },
 
             {
-                repositories.length === 0 && users.length === 0 ?
+                totalCount: userLogins.length === 0 ? "0" : userLogins[0].data.total_count,
+                title: "User Results"
+            },
 
-                    <EmptyPage />
+            {
+                totalCount: 0,
+                title: "Bookmarked Repository Results"
+            }
+        ]
+
+    let sideBarMenuData: any =
+        [
+            {
+                id: 0,
+                icon: <InsertDriveFile color={iconColor(0)} width={24} height={24} />,
+                name: "Repositories",
+                totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
+                onClick: () => { alert("Tıklandı"); setSelectedSidebarMenu(0) },
+                selectedSidebarMenu: false
+            },
+
+            {
+                id: 1,
+                icon: <InsertEmoticion color={iconColor(1)} width={24} height={24} />,
+                name: "Users",
+                totalCount: userLogins.length === 0 ? "0" : userLogins[0].data.total_count,
+                onClick: () => { alert("Tıklandı") },
+                selectedSidebarMenu: false
+            },
+
+            {
+                id: 2,
+                icon: <Bookmark color={iconColor(2)} width={24} height={24} />,
+                name: "Bookmarked",
+                totalCount: "0",
+                onClick: () => { alert("Tıklandı") },
+                selectedSidebarMenu: false
+            }
+
+        ];
+
+    const onClickSidebarMenu = (id: number) => {
+        //alert(id);
+        setSelectedSidebarMenu(id);
+    }
+
+    function getResults(selected: number) {
+
+        if (repositories.length != 0 && users.length != 0) {
+            if (selected === 0) {
+                return (
+                    repositories[0].data.items.map((val: any) => {
+                        return (
+                            <ListCard icon={<Book width={24} height={24} />} title={val.full_name} description={val.description} link={"repository-details/" + val.full_name} />
+                        );
+                    })
+                )
+            }
+
+            else if (selected === 1) {
+                return (
+                    users.map((val: any) => {
+                        return (
+                            <ListCard avatarURL={val.data.avatar_url} title={val.data.name} description={val.data.bio} link={"null"} />
+                        );
+                    })
+                )
+            }
+
+            else {
+                return null;
+            }
+        }
+    }
+
+    return (
+        <Box>
+            {
+                progress ?
+
+                    <LinearProgress />
 
                     :
 
-                    <Grid container >
+                    <Layout
 
-                        <Grid item xs={12} sm={3} >
+                        layoutA={
+                            sideBarMenuData.map((val: any) => {
+                                return (
+                                    <SidebarButton
+                                        id={val.id}
+                                        selectedID={selectedSidebarMenu}
+                                        icon={val.icon}
+                                        name={val.name}
+                                        totalCount={val.totalCount}
+                                        onClick={() => { onClickSidebarMenu(val.id) }}
+                                    />
+                                );
+                            })
+                        }
 
-                            <Box borderRight={1} style={{ height: "100%", borderRightColor: "#c4c4c4" }}>
-
-                                <Box borderBottom={1} style={{ borderBottomColor: "#c4c4c4", paddingTop: 8.5, paddingBottom: 8 }}>
-                                    {
-                                        sideBarMenuData.map((val: any) => {
-                                            return (
-                                                <SidebarButton
-                                                    id={val.id}
-                                                    selectedID={selectedSidebarMenu}
-                                                    icon={val.icon}
-                                                    name={val.name}
-                                                    totalCount={val.totalCount}
-                                                    onClick={() => { deneme(val.id) }}
-                                                />
-                                            );
-                                        })
-                                    }
-                                </Box>
-
+                        layoutB={
+                            <Box>
+                                <Title totalCount={titleData[selectedSidebarMenu].totalCount} title={titleData[selectedSidebarMenu].title} />
+                                { getResults(selectedSidebarMenu) }
                             </Box>
-
-                        </Grid>
-
-                        <Grid item xs={12} sm={9}>
-
-                            <Title totalCount={repositories[0].data.total_count} title={"Repository Results"} />
-
-                            {
-                                selectedSidebarMenu === 0 ?
-
-                                    repositories[0].data.items.map((val: any) => {
-                                        return (
-                                            <ListCard icon={<Book width={24} height={24} />} title={val.full_name} description={val.description} />
-                                        );
-                                    })
-
-                                    :
-
-                                    users.map((val: any) => {
-                                        return (
-                                            <ListCard avatarURL={val.data.avatar_url} title={val.data.name} description={val.data.bio} />
-                                        );
-                                    })
-                            }
-
-                        </Grid>
-
-                    </Grid>
+                        }
+                    />
 
             }
-
 
         </Box >
     );
