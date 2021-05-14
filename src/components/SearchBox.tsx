@@ -2,7 +2,6 @@ import React from 'react';
 import Box from '@material-ui/core/Box';
 import InputBase from '@material-ui/core/InputBase';
 import Search from "../svg/Search";
-
 import { useHistory, useRouteMatch } from "react-router-dom";
 
 const SearchBox = () => {

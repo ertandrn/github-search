@@ -60,11 +60,11 @@ function Search() {
          * Tek api ile kullanıcıların detaylı biligisini alamıyorum.
          * Bunun için her kullanıcı için ayrı ayrı istek göndermem gerekti.
          * Çok fazla istek gönderdiğimde ise bir süre sonra 403 hatası veriyor.
-         * Bu yüzden 2 kullanıcı listeledim.
+         * Bu yüzden 8 kullanıcı listeledim.
         */
 
         //for (let i = 0; i < userLogins[0].data.items.length; i++) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 8; i++) {
             try {
                 users.push(await axios.get("https://api.github.com/users/" + userLogins[0].data.items[i].login))
             } catch (error) { console.log(error); alert(error); return false; }
@@ -124,8 +124,6 @@ function Search() {
                 icon: <InsertDriveFile color={iconColor(0)} width={24} height={24} />,
                 name: "Repositories",
                 totalCount: repositories.length === 0 ? "0" : repositories[0].data.total_count,
-                onClick: () => { alert("Tıklandı"); setSelectedSidebarMenu(0) },
-                selectedSidebarMenu: false
             },
 
             {
@@ -133,8 +131,6 @@ function Search() {
                 icon: <InsertEmoticion color={iconColor(1)} width={24} height={24} />,
                 name: "Users",
                 totalCount: userLogins.length === 0 ? "0" : userLogins[0].data.total_count,
-                onClick: () => { alert("Tıklandı") },
-                selectedSidebarMenu: false
             },
 
             {
@@ -142,8 +138,6 @@ function Search() {
                 icon: <Bookmark color={iconColor(2)} width={24} height={24} />,
                 name: "Bookmarked",
                 totalCount: "0",
-                onClick: () => { alert("Tıklandı") },
-                selectedSidebarMenu: false
             }
 
         ];
@@ -170,7 +164,7 @@ function Search() {
                 return (
                     users.map((val: any) => {
                         return (
-                            <ListCard avatarURL={val.data.avatar_url} title={val.data.name} description={val.data.bio} link={"null"} />
+                            <ListCard avatarURL={val.data.avatar_url} title={val.data.name} description={val.data.bio} link={"user-details/" + val.data.login} />
                         );
                     })
                 )
@@ -192,7 +186,7 @@ function Search() {
                     :
 
                     <Layout
-
+                        horizontalLine={true}
                         layoutA={
                             sideBarMenuData.map((val: any) => {
                                 return (

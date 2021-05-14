@@ -97,7 +97,7 @@ function RepositoryDetails() {
     return (
 
         <Layout
-
+            horizontalLine={false}
             layoutA={
                 <Box
                     style={{

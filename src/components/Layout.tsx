@@ -10,7 +10,7 @@ function Layout(props: any) {
 
                 <Box borderRight={1} style={{ height: "100%", borderRightColor: "#c4c4c4" }}>
 
-                    <Box borderBottom={1} style={{ borderBottomColor: "#c4c4c4", paddingTop: 8.5, paddingBottom: 8 }}>
+                    <Box borderBottom={ props.horizontalLine ? 1 : 0} style={{ borderBottomColor: "#c4c4c4", paddingTop: 8.5, paddingBottom: 8 }}>
                         {props.layoutA}
                     </Box>
 

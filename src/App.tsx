@@ -2,8 +2,9 @@ import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Header from "./components/Header";
 import SearchFirst from "./views/SearchFirst";
-import Search from "./views/Search";
+import SearchResults from "./views/SearchResults";
 import RepositoryDetails from "./views/RepositoryDetails";
+import UserDetails from "./views/UserDetails";
 
 
 function App() {
@@ -15,9 +16,11 @@ function App() {
 
       <Switch>
         <Route component={SearchFirst} path="/" exact />
-        <Route component={Search} path="/:search" exact/>
+        <Route component={SearchResults} path="/:search" exact/>
         <Route component={RepositoryDetails} path="/repository-details/:login/:name" exact />
+        <Route component={UserDetails} path="/user-details/:login" exact />
       </Switch>
+      
     </Router>
   );
 }
